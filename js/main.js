@@ -397,6 +397,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const corporateFieldsBlock = document.getElementById('corporateFieldsBlock');
   const weddingFieldsBlock = document.getElementById('weddingFieldsBlock');
   const eventFieldsBlock = document.getElementById('eventFieldsBlock');
+  const part1RideFieldsBlock = document.getElementById('part1RideFieldsBlock');
+  const standardContactBlock = document.getElementById('standardContactBlock');
 
   // Privacy Modal Elements
   const privacyPolicyModal = document.getElementById('privacyPolicyModal');
@@ -576,24 +578,46 @@ document.addEventListener('DOMContentLoaded', () => {
       airportFieldsContainer?.classList.toggle('active', isAirport);
     }
 
-    // Auto-detect B2B Enterprise portions (Corporate, Wedding, Conferences)
+    // Auto-detect B2B Enterprise portions (1-Corporate Contracts, 2-Weddings & Family Events, 3-Corporate Events)
     const lower = cleanServiceName.toLowerCase();
-    const isCorporate = lower.includes('corporate') || lower.includes('employee') || lower.includes('contract');
-    const isWedding = lower.includes('wedding');
-    const isEvent = lower.includes('event') || lower.includes('conference');
+    const isCorporateContracts = (lower.includes('corporate contract') || lower.includes('employee transport') || lower.includes('corporate quotation') || lower.includes('corporate contract or event rfp')) && !lower.includes('corporate event');
+    const isWedding = lower.includes('wedding') || lower.includes('family event');
+    const isCorporateEvents = lower.includes('corporate event') || lower.includes('conference');
+    const isEnterprise = isCorporateContracts || isWedding || isCorporateEvents;
 
-    if (enterpriseSection) {
-      if (isCorporate || isWedding || isEvent) {
-        enterpriseSection.style.display = 'block';
-        if (corporateFieldsBlock) corporateFieldsBlock.style.display = isCorporate ? 'block' : 'none';
-        if (weddingFieldsBlock) weddingFieldsBlock.style.display = isWedding ? 'block' : 'none';
-        if (eventFieldsBlock) eventFieldsBlock.style.display = isEvent ? 'block' : 'none';
-      } else {
-        enterpriseSection.style.display = 'none';
-        if (corporateFieldsBlock) corporateFieldsBlock.style.display = 'none';
-        if (weddingFieldsBlock) weddingFieldsBlock.style.display = 'none';
-        if (eventFieldsBlock) eventFieldsBlock.style.display = 'none';
+    if (isEnterprise) {
+      if (enterpriseSection) enterpriseSection.style.display = 'block';
+      if (part1RideFieldsBlock) part1RideFieldsBlock.style.display = 'none';
+      if (standardContactBlock) standardContactBlock.style.display = 'none';
+
+      if (corporateFieldsBlock) corporateFieldsBlock.style.display = isCorporateContracts ? 'block' : 'none';
+      if (weddingFieldsBlock) weddingFieldsBlock.style.display = isWedding ? 'block' : 'none';
+      if (eventFieldsBlock) eventFieldsBlock.style.display = isCorporateEvents ? 'block' : 'none';
+
+      if (isCorporateContracts) {
+        if (modalServiceTitle) modalServiceTitle.textContent = 'Enquiry: Corporate Contracts & Employee Transport';
+        if (formTripField) formTripField.value = 'Corporate Contracts & Employee Transport';
+        if (formSubjectField) formSubjectField.value = 'Corporate Contracts Enquiry - ' + (document.getElementById('corpCompanyName')?.value || 'RFP');
+      } else if (isWedding) {
+        if (modalServiceTitle) modalServiceTitle.textContent = 'Enquiry: Weddings & Family Events Mobility';
+        if (formTripField) formTripField.value = 'Weddings & Family Events';
+        if (formSubjectField) formSubjectField.value = 'Wedding & Family Events Enquiry';
+      } else if (isCorporateEvents) {
+        if (modalServiceTitle) modalServiceTitle.textContent = 'Enquiry: Corporate Events & Conferences Logistics';
+        if (formTripField) formTripField.value = 'Corporate Events';
+        if (formSubjectField) formSubjectField.value = 'Corporate Events Enquiry';
       }
+    } else {
+      if (enterpriseSection) enterpriseSection.style.display = 'none';
+      if (corporateFieldsBlock) corporateFieldsBlock.style.display = 'none';
+      if (weddingFieldsBlock) weddingFieldsBlock.style.display = 'none';
+      if (eventFieldsBlock) eventFieldsBlock.style.display = 'none';
+      if (part1RideFieldsBlock) part1RideFieldsBlock.style.display = 'block';
+      if (standardContactBlock) standardContactBlock.style.display = 'block';
+
+      if (modalServiceTitle) modalServiceTitle.textContent = `Trip name: * ${cleanServiceName}`;
+      if (formTripField) formTripField.value = cleanServiceName;
+      if (formSubjectField) formSubjectField.value = `Enquiry for ${cleanServiceName}`;
     }
 
     if (formDaysField) {
@@ -669,20 +693,286 @@ document.addEventListener('DOMContentLoaded', () => {
   cabEnquiryForm?.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    const isEnterprise = enterpriseSection && enterpriseSection.style.display !== 'none';
+    const isCorpActive = isEnterprise && corporateFieldsBlock && corporateFieldsBlock.style.display !== 'none';
+    const isWedActive = isEnterprise && weddingFieldsBlock && weddingFieldsBlock.style.display !== 'none';
+    const isEvtActive = isEnterprise && eventFieldsBlock && eventFieldsBlock.style.display !== 'none';
+
+    // =========================================================================
+    // 1. CORPORATE CONTRACTS & EMPLOYEE TRANSPORT SUBMISSION
+    // =========================================================================
+    if (isCorpActive) {
+      const corpCompany = document.getElementById('corpCompanyName')?.value.trim() || '';
+      const corpPerson = document.getElementById('corpContactPerson')?.value.trim() || '';
+      const corpDesig = document.getElementById('corpDesignation')?.value.trim() || '';
+      const corpEmail = document.getElementById('corpWorkEmail')?.value.trim() || '';
+      const corpPhone = document.getElementById('corpPhone')?.value.trim() || '';
+      const corpCity = document.getElementById('corpCityLocation')?.value.trim() || '';
+      const corpService = document.getElementById('corpServiceNeeded')?.value || '';
+      const corpNotes = document.getElementById('corpNotes')?.value.trim() || 'None provided';
+
+      if (!corpCompany || !corpPerson || !corpDesig || !corpEmail || !corpPhone || !corpCity || !corpService) {
+        alert('Please fill in all required Corporate Contract details:\n• Company Name\n• Contact Person & Designation\n• Work Email & Phone/WhatsApp\n• City/Office Location\n• Service Needed');
+        return;
+      }
+
+      const waText = 
+`🏢 *1. CORPORATE CONTRACTS ENQUIRY — CabsByVelociti*
+*Enterprise Mobility Simplified | Pan India*
+━━━━━━━━━━━━━━━━━━━━
+🏢 *Company Name:* ${corpCompany}
+👤 *Contact Person:* ${corpPerson}
+💼 *Designation:* ${corpDesig}
+📧 *Work Email:* ${corpEmail}
+📱 *Phone / WhatsApp:* ${corpPhone}
+📍 *City / Office Location:* ${corpCity}
+📋 *Service Needed:* ${corpService}
+📝 *Additional Fleet / Route Notes:*
+"${corpNotes}"
+━━━━━━━━━━━━━━━━━━━━
+🌙 *Terms:* Night duty applicable only after 10:00 PM to 06:00 AM
+📞 Direct Corporate Desk: +91 98180 91778
+✉️ jaswinder@velociticabs.com
+🌐 CabsByVelociti`;
+
+      const mailSubject = encodeURIComponent(`[Corporate Contract RFP] ${corpCompany} - ${corpPerson} (${corpDesig})`);
+      const mailBody = encodeURIComponent(
+`1. CORPORATE CONTRACTS ENQUIRY — CabsByVelociti
+
+CONTACT DETAILS (REQUIRED):
+Company Name: ${corpCompany}
+Contact Person's Name: ${corpPerson}
+Designation: ${corpDesig}
+Work Email: ${corpEmail}
+Phone / WhatsApp: ${corpPhone}
+City / Office Location: ${corpCity}
+
+SERVICE NEEDED:
+${corpService}
+
+ADDITIONAL FLEET / ROUTE NOTES:
+${corpNotes}
+
+TERMS:
+Night duty is applicable only after 10:00 PM to 06:00 AM.
+
+--
+Main Head Office: Near Plot No. A-7, Satsang Vihar Marg, Qutab Institutional Area, New Delhi - 110067
+Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
+      );
+
+      window.open(`https://wa.me/919818091778?text=${encodeURIComponent(waText)}`, '_blank');
+      setTimeout(() => {
+        window.location.href = `mailto:jaswinder@velociticabs.com?subject=${mailSubject}&body=${mailBody}`;
+      }, 900);
+
+      closeEnquiryModal();
+      showToastNotification('✅ Corporate Contracts enquiry submitted! Opening WhatsApp & Email.');
+      cabEnquiryForm.reset();
+      return;
+    }
+
+    // =========================================================================
+    // 2. WEDDING AND FAMILY EVENTS SUBMISSION
+    // =========================================================================
+    if (isWedActive) {
+      const wedName = document.getElementById('wedName')?.value.trim() || '';
+      const wedPhone = document.getElementById('wedPhone')?.value.trim() || '';
+      const wedEmail = document.getElementById('wedEmail')?.value.trim() || '';
+      const wedType = document.getElementById('wedEventType')?.value || 'Wedding';
+      const wedDates = document.getElementById('wedEventDates')?.value.trim() || '';
+      const wedCity = document.getElementById('wedEventCity')?.value.trim() || '';
+      const wedVenues = document.getElementById('wedVenueNames')?.value.trim() || 'Not specified';
+      const wedGuests = document.getElementById('wedGuestCount')?.value.trim() || '';
+      const wedBudget = document.getElementById('wedBudget')?.value || 'Not sure yet';
+      const wedNotes = document.getElementById('wedNotes')?.value.trim() || 'None provided';
+
+      const wedVehicles = [];
+      if (document.getElementById('wedVehLuxurySedan')?.checked) wedVehicles.push('Luxury Sedan (Mercedes / BMW / Audi)');
+      if (document.getElementById('wedVehSUV')?.checked) wedVehicles.push('SUV (Fortuner / Innova)');
+      if (document.getElementById('wedVehVintage')?.checked) wedVehicles.push('Vintage / Luxury Entry Car');
+      if (document.getElementById('wedVehTempo')?.checked) wedVehicles.push('Tempo Traveller / Force Urbania');
+      if (document.getElementById('wedVehBus')?.checked) wedVehicles.push('Luxury Coach Bus');
+      if (document.getElementById('wedVehMixed')?.checked) wedVehicles.push('Mixed Fleet');
+      const wedVehiclesStr = wedVehicles.length > 0 ? wedVehicles.join(', ') : 'Not selected';
+
+      if (!wedName || !wedPhone || !wedEmail || !wedDates || !wedCity || !wedGuests) {
+        alert('Please fill in all required Wedding & Event details:\n• Name\n• Phone / WhatsApp\n• Email\n• Event Date(s) & City\n• Number of Guests / Attendees');
+        return;
+      }
+
+      const waText = 
+`💍 *2. WEDDINGS & FAMILY EVENTS ENQUIRY — CabsByVelociti*
+*Luxury Event Mobility | Pan India*
+━━━━━━━━━━━━━━━━━━━━
+👤 *Name:* ${wedName}
+📱 *Phone / WhatsApp:* ${wedPhone}
+📧 *Email:* ${wedEmail}
+🎉 *Event Type:* ${wedType}
+📅 *Event Date(s):* ${wedDates}
+📍 *City:* ${wedCity}
+🏨 *Venue Name(s):* ${wedVenues}
+👥 *Number of Guests/Attendees:* ${wedGuests}
+🚘 *Vehicles Needed:* ${wedVehiclesStr}
+💰 *Budget Range:* ${wedBudget}
+📝 *Notes & Preferred Callback Time:*
+"${wedNotes}"
+━━━━━━━━━━━━━━━━━━━━
+🌙 *Terms:* Night duty applicable only after 10:00 PM to 06:00 AM
+📞 Direct Event Desk: +91 98180 91778
+✉️ jaswinder@velociticabs.com
+🌐 CabsByVelociti`;
+
+      const mailSubject = encodeURIComponent(`[Wedding & Family Event] ${wedType} in ${wedCity} - ${wedName}`);
+      const mailBody = encodeURIComponent(
+`2. WEDDINGS & FAMILY EVENTS ENQUIRY — CabsByVelociti
+
+CONTACT DETAILS:
+Name: ${wedName}
+Phone / WhatsApp: ${wedPhone}
+Email: ${wedEmail}
+
+EVENT SPECIFICATIONS:
+Event Type: ${wedType}
+Event Date(s): ${wedDates}
+City: ${wedCity}
+Venue Name(s): ${wedVenues}
+Number of Guests / Attendees: ${wedGuests}
+
+FLEET & BUDGET:
+Number and Type of Vehicles Needed: ${wedVehiclesStr}
+Budget Range: ${wedBudget}
+
+NOTES & PREFERRED CALLBACK TIME:
+${wedNotes}
+
+TERMS:
+Night duty is applicable only after 10:00 PM to 06:00 AM.
+
+--
+Main Head Office: Near Plot No. A-7, Satsang Vihar Marg, Qutab Institutional Area, New Delhi - 110067
+Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
+      );
+
+      window.open(`https://wa.me/919818091778?text=${encodeURIComponent(waText)}`, '_blank');
+      setTimeout(() => {
+        window.location.href = `mailto:jaswinder@velociticabs.com?subject=${mailSubject}&body=${mailBody}`;
+      }, 900);
+
+      closeEnquiryModal();
+      showToastNotification('✅ Wedding & Family Events enquiry submitted! Opening WhatsApp & Email.');
+      cabEnquiryForm.reset();
+      return;
+    }
+
+    // =========================================================================
+    // 3. CORPORATE EVENTS SUBMISSION
+    // =========================================================================
+    if (isEvtActive) {
+      const evtCompany = document.getElementById('evtCompanyName')?.value.trim() || '';
+      const evtDesig = document.getElementById('evtDesignation')?.value.trim() || '';
+      const evtPerson = document.getElementById('evtContactPerson')?.value.trim() || '';
+      const evtPhone = document.getElementById('evtPhone')?.value.trim() || '';
+      const evtEmail = document.getElementById('evtEmail')?.value.trim() || '';
+      const evtAttendee = document.getElementById('evtAttendeeType')?.value || 'delegates';
+      const evtTransfer = document.getElementById('evtTransferType')?.value || 'airport/hotel/venue shuttle';
+      const evtHotels = document.getElementById('evtHotelPoints')?.value.trim() || '';
+      const evtSchedule = document.getElementById('evtSchedule')?.value.trim() || '';
+      const evtCoord = document.getElementById('evtCoordinator')?.value || 'Yes';
+      const evtRecurring = document.getElementById('evtRecurring')?.value || 'One-time event';
+      const evtNotes = document.getElementById('evtNotes')?.value.trim() || 'None provided';
+
+      if (!evtCompany || !evtDesig || !evtPerson || !evtPhone || !evtEmail || !evtHotels || !evtSchedule) {
+        alert('Please fill in all required Corporate Event details:\n• Company Name & Your Designation\n• Contact Person, Phone & Email\n• Number of Hotels/Pickup Points\n• Event Schedule (Start/End Times, Daily)');
+        return;
+      }
+
+      const waText = 
+`🎤 *3. CORPORATE EVENTS ENQUIRY — CabsByVelociti*
+*Conferences, Summits & Delegations | Pan India*
+━━━━━━━━━━━━━━━━━━━━
+🏢 *Company Name:* ${evtCompany}
+💼 *Your Designation:* ${evtDesig}
+👤 *Contact Person:* ${evtPerson}
+📱 *Phone / WhatsApp:* ${evtPhone}
+📧 *Work Email:* ${evtEmail}
+👥 *Attendee Type:* ${evtAttendee}
+🔄 *Transfer Type:* ${evtTransfer}
+🏨 *Number of Hotels / Pickup Points:* ${evtHotels}
+⏰ *Event Schedule (Start & End Times, Daily):* ${evtSchedule}
+🛡️ *Dedicated On-Ground Coordinator:* ${evtCoord}
+🔁 *One-Time or Recurring Event:* ${evtRecurring}
+📝 *Estimated Fleet Size & Special Logistics Notes:*
+"${evtNotes}"
+━━━━━━━━━━━━━━━━━━━━
+🌙 *Terms:* Night duty applicable only after 10:00 PM to 06:00 AM
+📞 Direct Corporate Desk: +91 98180 91778
+✉️ jaswinder@velociticabs.com
+🌐 CabsByVelociti`;
+
+      const mailSubject = encodeURIComponent(`[Corporate Event Logistics] ${evtCompany} - ${evtPerson} (${evtDesig})`);
+      const mailBody = encodeURIComponent(
+`3. CORPORATE EVENTS ENQUIRY — CabsByVelociti
+
+ORGANIZATION & CONTACT:
+Company Name: ${evtCompany}
+Your Designation: ${evtDesig}
+Contact Person: ${evtPerson}
+Phone / WhatsApp: ${evtPhone}
+Work Email: ${evtEmail}
+
+LOGISTICS & TRANSFER SCOPE:
+Attendee Type: ${evtAttendee}
+Transfer Type: ${evtTransfer}
+Number of Hotels / Pickup Points: ${evtHotels}
+Event Schedule (Start & End Times, Daily): ${evtSchedule}
+Dedicated On-Ground Coordinator: ${evtCoord}
+Event Frequency: ${evtRecurring}
+
+ESTIMATED FLEET SIZE & SPECIAL LOGISTICS NOTES:
+${evtNotes}
+
+TERMS:
+Night duty is applicable only after 10:00 PM to 06:00 AM.
+
+--
+Main Head Office: Near Plot No. A-7, Satsang Vihar Marg, Qutab Institutional Area, New Delhi - 110067
+Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
+      );
+
+      window.open(`https://wa.me/919818091778?text=${encodeURIComponent(waText)}`, '_blank');
+      setTimeout(() => {
+        window.location.href = `mailto:jaswinder@velociticabs.com?subject=${mailSubject}&body=${mailBody}`;
+      }, 900);
+
+      closeEnquiryModal();
+      showToastNotification('✅ Corporate Events enquiry submitted! Opening WhatsApp & Email.');
+      cabEnquiryForm.reset();
+      return;
+    }
+
+    // =========================================================================
+    // 4. PART 1 RIDES, TOURS & SIGHTSEEING SUBMISSION (DEFAULT)
+    // =========================================================================
     const tripName = formTripField?.value || hiddenServiceName?.value || 'General Cab Enquiry';
     const carRequired = formCarField?.value || 'Not specified';
     const travelDate = formDateField?.value || 'Not specified';
     const pickupTime = formTimeField?.value || 'Not specified';
     const days = formDaysField?.value || 'Same Day';
-    const userName = document.getElementById('formNameField')?.value || '';
-    const userEmail = document.getElementById('formEmailField')?.value || '';
+    const userName = document.getElementById('formNameField')?.value.trim() || '';
+    const userEmail = document.getElementById('formEmailField')?.value.trim() || '';
     const userCountry = document.getElementById('formCountryField')?.value || 'India';
-    const userPhone = document.getElementById('formPhoneField')?.value || '';
+    const userPhone = document.getElementById('formPhoneField')?.value.trim() || '';
     const persons = document.getElementById('formPersonsField')?.value || '1';
-    const pickupLoc = document.getElementById('formPickupLocation')?.value || 'Delhi NCR';
-    const dropLoc = document.getElementById('formDropLocation')?.value || 'Not specified';
+    const pickupLoc = document.getElementById('formPickupLocation')?.value.trim() || 'Delhi NCR';
+    const dropLoc = document.getElementById('formDropLocation')?.value.trim() || 'Not specified';
     const subject = formSubjectField?.value || 'Cab Enquiry';
-    const message = document.getElementById('formMessageField')?.value || '';
+    const message = document.getElementById('formMessageField')?.value.trim() || '';
+
+    if (!userName || !userPhone) {
+      alert('Please fill in your Name and Contact Number to proceed with the enquiry.');
+      return;
+    }
 
     // Check Tour Package Inclusions (Hotel, Meals, Tour Guide)
     const includeHotel = document.getElementById('modalIncludeHotel')?.checked;
@@ -728,75 +1018,6 @@ document.addEventListener('DOMContentLoaded', () => {
 - Flight Departure/Arrival Time: ${flightTime}\n\n`;
     }
 
-    // Check enterprise / B2B details
-    let b2bBlockWa = '';
-    let b2bBlockMail = '';
-
-    const lowerName = tripName.toLowerCase();
-    if (lowerName.includes('corporate') || lowerName.includes('contract') || lowerName.includes('employee')) {
-      const compName = document.getElementById('formCompanyName')?.value || 'Not provided';
-      const duration = document.getElementById('formContractDuration')?.value || '1 Year';
-      const usage = document.getElementById('formMonthlyUsage')?.value || 'Not provided';
-      const fleetEst = document.getElementById('formFleetEstimate')?.value || 'Not provided';
-
-      b2bBlockWa = 
-`🏢 *Corporate Contract & Employee Transport:*
- • Company Name & Industry: ${compName}
- • Contract Duration: ${duration}
- • Monthly Usage / Routes: ${usage}
- • Fleet Requirement Estimate: ${fleetEst}\n`;
-
-      b2bBlockMail = 
-`Corporate Contract & Employee Transport:
-- Company Name & Industry: ${compName}
-- Contract Duration: ${duration}
-- Monthly Usage / Routes: ${usage}
-- Fleet Requirement Estimate: ${fleetEst}\n\n`;
-    } else if (lowerName.includes('wedding')) {
-      const dates = document.getElementById('formEventDates')?.value || 'Not provided';
-      const locations = document.getElementById('formEventLocations')?.value || 'Not provided';
-      const guests = document.getElementById('formGuestCount')?.value || 'Not specified';
-      
-      const mix = [];
-      if (document.getElementById('mixBrideGroom')?.checked) mix.push('Bride/Groom Entry Car');
-      if (document.getElementById('mixVipFamily')?.checked) mix.push('VIP Family Transport');
-      if (document.getElementById('mixGuestShuttle')?.checked) mix.push('Guest Shuttle Buses/Vans');
-      const mixStr = mix.length > 0 ? mix.join(', ') : 'Custom fleet mix';
-
-      b2bBlockWa = 
-`💍 *Wedding & Family Event Specifications:*
- • Event Dates: ${dates}
- • Primary Event Locations: ${locations}
- • Estimated Guest Count: ${guests}
- • Specific Fleet Mix Needed: ${mixStr}\n`;
-
-      b2bBlockMail = 
-`Wedding & Family Event Specifications:
-- Event Dates: ${dates}
-- Primary Event Locations: ${locations}
-- Estimated Guest Count: ${guests}
-- Specific Fleet Mix Needed: ${mixStr}\n\n`;
-    } else if (lowerName.includes('event') || lowerName.includes('conference')) {
-      const eventNameDates = document.getElementById('formEventNameDates')?.value || 'Not provided';
-      const venues = document.getElementById('formEventVenues')?.value || 'Not provided';
-      const scope = document.getElementById('formLogisticsScope')?.value || 'Not provided';
-      const fleetSize = document.getElementById('formEventFleetSize')?.value || 'Not provided';
-
-      b2bBlockWa = 
-`🎤 *Conference & Corporate Event Scope:*
- • Event Name & Dates: ${eventNameDates}
- • Venue(s): ${venues}
- • Logistics Scope: ${scope}
- • Estimated Fleet Size & Types: ${fleetSize}\n`;
-
-      b2bBlockMail = 
-`Conference & Corporate Event Scope:
-- Event Name & Dates: ${eventNameDates}
-- Venue(s): ${venues}
-- Logistics Scope: ${scope}
-- Estimated Fleet Size & Types: ${fleetSize}\n\n`;
-    }
-
     // 1. Build WhatsApp message text formatted with markdown
     const waText = 
 `🚗 *NEW ENQUIRY — CabsByVelociti*
@@ -810,15 +1031,17 @@ document.addEventListener('DOMContentLoaded', () => {
 ⏰ *Pickup Time:* ${pickupTime}
 ⏱️ *Duration / Stay:* ${days}
 👤 *Client Name:* ${userName}
-📧 *Email:* ${userEmail}
+📧 *Email:* ${userEmail || 'Not specified'}
 🌍 *Country:* ${userCountry}
 📱 *Contact Number:* ${userPhone}
 👥 *No. of Persons:* ${persons}
-${addonsBlockWa}${airportBlockWa}${b2bBlockWa}📝 *Subject:* ${subject}
+${addonsBlockWa}${airportBlockWa}📝 *Subject:* ${subject}
 💬 *Message:* 
-"${message}"
+"${message || 'None'}"
 ━━━━━━━━━━━━━━━━━━━━
+🌙 *Terms:* Night duty applicable only after 10:00 PM to 06:00 AM
 📞 Direct Business Number: +91 98180 91778
+✉️ jaswinder@velociticabs.com
 🌐 CabsByVelociti (Mobility Simplified)`;
 
     const encodedWaText = encodeURIComponent(waText);
@@ -836,17 +1059,21 @@ Pickup Time: ${pickupTime}
 Duration / Days: ${days}
 
 Client Name: ${userName}
-Email: ${userEmail}
+Email: ${userEmail || 'Not specified'}
 Country: ${userCountry}
 Contact Number: ${userPhone}
 No. of Persons: ${persons}
 
-${addonsBlockMail}${airportBlockMail}${b2bBlockMail}Subject: ${subject}
+${addonsBlockMail}${airportBlockMail}Subject: ${subject}
 Message:
-${message}
+${message || 'None'}
+
+TERMS:
+Night duty is applicable only after 10:00 PM to 06:00 AM.
 
 --
-Sent via CabsByVelociti website inquiry form.`
+Main Head Office: Near Plot No. A-7, Satsang Vihar Marg, Qutab Institutional Area, New Delhi - 110067
+Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
     );
     const mailtoUrl = `mailto:jaswinder@velociticabs.com?subject=${mailSubject}&body=${mailBody}`;
 

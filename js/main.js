@@ -689,6 +689,54 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === modalBackdrop) closeEnquiryModal();
   });
 
+  // Helper to sync wedding vehicles quantity and total
+  function recalcWeddingVehicles() {
+    const configs = [
+      { check: 'wedVehLuxurySedan', qty: 'wedQtyLuxurySedan', box: 'wedBoxLuxurySedan' },
+      { check: 'wedVehSUV', qty: 'wedQtySUV', box: 'wedBoxSUV' },
+      { check: 'wedVehVintage', qty: 'wedQtyVintage', box: 'wedBoxVintage' },
+      { check: 'wedVehTempo', qty: 'wedQtyTempo', box: 'wedBoxTempo' },
+      { check: 'wedVehBus', qty: 'wedQtyBus', box: 'wedBoxBus' },
+      { check: 'wedVehMixed', qty: 'wedQtyMixed', box: 'wedBoxMixed' }
+    ];
+
+    let total = 0;
+    configs.forEach(item => {
+      const cb = document.getElementById(item.check);
+      const qtyInput = document.getElementById(item.qty);
+      const box = document.getElementById(item.box);
+
+      if (cb && qtyInput && box) {
+        if (cb.checked) {
+          box.classList.add('active');
+          qtyInput.disabled = false;
+          const val = parseInt(qtyInput.value) || 1;
+          total += val;
+        } else {
+          box.classList.remove('active');
+          qtyInput.disabled = true;
+        }
+      }
+    });
+
+    const totalInput = document.getElementById('wedTotalVehicles');
+    if (totalInput) {
+      totalInput.value = total > 0 ? total : 1;
+    }
+  }
+
+  // Attach event listeners for real-time recalculation of wedding fleet
+  [
+    'wedVehLuxurySedan', 'wedVehSUV', 'wedVehVintage', 'wedVehTempo', 'wedVehBus', 'wedVehMixed',
+    'wedQtyLuxurySedan', 'wedQtySUV', 'wedQtyVintage', 'wedQtyTempo', 'wedQtyBus', 'wedQtyMixed'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', recalcWeddingVehicles);
+      el.addEventListener('input', recalcWeddingVehicles);
+    }
+  });
+
   // ---------- 12. Automated WhatsApp & Email Dispatch Form ----------
   cabEnquiryForm?.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -709,6 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const corpPhone = document.getElementById('corpPhone')?.value.trim() || '';
       const corpCity = document.getElementById('corpCityLocation')?.value.trim() || '';
       const corpService = document.getElementById('corpServiceNeeded')?.value || '';
+      const corpFleet = document.getElementById('corpFleetCount')?.value.trim() || 'As per requirement';
       const corpNotes = document.getElementById('corpNotes')?.value.trim() || 'None provided';
 
       if (!corpCompany || !corpPerson || !corpDesig || !corpEmail || !corpPhone || !corpCity || !corpService) {
@@ -727,6 +776,7 @@ document.addEventListener('DOMContentLoaded', () => {
 📱 *Phone / WhatsApp:* ${corpPhone}
 📍 *City / Office Location:* ${corpCity}
 📋 *Service Needed:* ${corpService}
+🚗 *Number of Vehicles Required:* ${corpFleet}
 📝 *Additional Fleet / Route Notes:*
 "${corpNotes}"
 ━━━━━━━━━━━━━━━━━━━━
@@ -749,6 +799,9 @@ City / Office Location: ${corpCity}
 
 SERVICE NEEDED:
 ${corpService}
+
+NUMBER OF VEHICLES REQUIRED (FLEET ESTIMATE):
+${corpFleet}
 
 ADDITIONAL FLEET / ROUTE NOTES:
 ${corpNotes}
@@ -784,17 +837,32 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
       const wedCity = document.getElementById('wedEventCity')?.value.trim() || '';
       const wedVenues = document.getElementById('wedVenueNames')?.value.trim() || 'Not specified';
       const wedGuests = document.getElementById('wedGuestCount')?.value.trim() || '';
+      const wedTotalVehicles = document.getElementById('wedTotalVehicles')?.value.trim() || '5';
       const wedBudget = document.getElementById('wedBudget')?.value || 'Not sure yet';
       const wedNotes = document.getElementById('wedNotes')?.value.trim() || 'None provided';
 
       const wedVehicles = [];
-      if (document.getElementById('wedVehLuxurySedan')?.checked) wedVehicles.push('Luxury Sedan (Mercedes / BMW / Audi)');
-      if (document.getElementById('wedVehSUV')?.checked) wedVehicles.push('SUV (Fortuner / Innova)');
-      if (document.getElementById('wedVehVintage')?.checked) wedVehicles.push('Vintage / Luxury Entry Car');
-      if (document.getElementById('wedVehTempo')?.checked) wedVehicles.push('Tempo Traveller / Force Urbania');
-      if (document.getElementById('wedVehBus')?.checked) wedVehicles.push('Luxury Coach Bus');
-      if (document.getElementById('wedVehMixed')?.checked) wedVehicles.push('Mixed Fleet');
+      const wedBreakdown = [];
+      const configs = [
+        { check: 'wedVehLuxurySedan', qty: 'wedQtyLuxurySedan', name: 'Luxury Sedan (Mercedes / BMW / Audi)', unit: 'Cars' },
+        { check: 'wedVehSUV', qty: 'wedQtySUV', name: 'SUV (Fortuner / Innova)', unit: 'Cars' },
+        { check: 'wedVehVintage', qty: 'wedQtyVintage', name: 'Vintage / Luxury Car (Bride/Groom Entry)', unit: 'Car' },
+        { check: 'wedVehTempo', qty: 'wedQtyTempo', name: 'Tempo Traveller / Force Urbania', unit: 'Vans' },
+        { check: 'wedVehBus', qty: 'wedQtyBus', name: 'Bus (Luxury Coach 22-45 Seater)', unit: 'Coaches' },
+        { check: 'wedVehMixed', qty: 'wedQtyMixed', name: 'Mixed Fleet (Sedans, SUVs & Buses)', unit: 'Vehicles' }
+      ];
+
+      configs.forEach(item => {
+        const cb = document.getElementById(item.check);
+        const qty = document.getElementById(item.qty)?.value || '1';
+        if (cb?.checked) {
+          wedVehicles.push(`${item.name} (${qty} ${item.unit})`);
+          wedBreakdown.push(` • ${item.name}: ${qty} ${item.unit}`);
+        }
+      });
+
       const wedVehiclesStr = wedVehicles.length > 0 ? wedVehicles.join(', ') : 'Not selected';
+      const wedVehiclesDetails = wedBreakdown.length > 0 ? wedBreakdown.join('\n') : ' • Mixed fleet as per requirement';
 
       if (!wedName || !wedPhone || !wedEmail || !wedDates || !wedCity || !wedGuests) {
         alert('Please fill in all required Wedding & Event details:\n• Name\n• Phone / WhatsApp\n• Email\n• Event Date(s) & City\n• Number of Guests / Attendees');
@@ -813,7 +881,9 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
 📍 *City:* ${wedCity}
 🏨 *Venue Name(s):* ${wedVenues}
 👥 *Number of Guests/Attendees:* ${wedGuests}
-🚘 *Vehicles Needed:* ${wedVehiclesStr}
+🚘 *Total Number of Vehicles Required:* ${wedTotalVehicles} Vehicles
+🚗 *Vehicle Types & Breakdown:*
+${wedVehiclesDetails}
 💰 *Budget Range:* ${wedBudget}
 📝 *Notes & Preferred Callback Time:*
 "${wedNotes}"
@@ -823,7 +893,7 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
 ✉️ jaswinder@velociticabs.com
 🌐 CabsByVelociti`;
 
-      const mailSubject = encodeURIComponent(`[Wedding & Family Event] ${wedType} in ${wedCity} - ${wedName}`);
+      const mailSubject = encodeURIComponent(`[Wedding & Family Event] ${wedType} in ${wedCity} - ${wedName} (${wedTotalVehicles} Vehicles)`);
       const mailBody = encodeURIComponent(
 `2. WEDDINGS & FAMILY EVENTS ENQUIRY — CabsByVelociti
 
@@ -839,8 +909,10 @@ City: ${wedCity}
 Venue Name(s): ${wedVenues}
 Number of Guests / Attendees: ${wedGuests}
 
-FLEET & BUDGET:
-Number and Type of Vehicles Needed: ${wedVehiclesStr}
+FLEET & VEHICLES REQUIRED:
+Total Number of Vehicles Required: ${wedTotalVehicles} Vehicles
+Vehicle Types & Quantity Breakdown:
+${wedBreakdown.join('\n')}
 Budget Range: ${wedBudget}
 
 NOTES & PREFERRED CALLBACK TIME:
@@ -880,6 +952,7 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
       const evtSchedule = document.getElementById('evtSchedule')?.value.trim() || '';
       const evtCoord = document.getElementById('evtCoordinator')?.value || 'Yes';
       const evtRecurring = document.getElementById('evtRecurring')?.value || 'One-time event';
+      const evtFleet = document.getElementById('evtFleetCount')?.value.trim() || 'As per requirement';
       const evtNotes = document.getElementById('evtNotes')?.value.trim() || 'None provided';
 
       if (!evtCompany || !evtDesig || !evtPerson || !evtPhone || !evtEmail || !evtHotels || !evtSchedule) {
@@ -902,6 +975,7 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
 ⏰ *Event Schedule (Start & End Times, Daily):* ${evtSchedule}
 🛡️ *Dedicated On-Ground Coordinator:* ${evtCoord}
 🔁 *One-Time or Recurring Event:* ${evtRecurring}
+🚗 *Number of Vehicles Required:* ${evtFleet}
 📝 *Estimated Fleet Size & Special Logistics Notes:*
 "${evtNotes}"
 ━━━━━━━━━━━━━━━━━━━━
@@ -929,7 +1003,10 @@ Event Schedule (Start & End Times, Daily): ${evtSchedule}
 Dedicated On-Ground Coordinator: ${evtCoord}
 Event Frequency: ${evtRecurring}
 
-ESTIMATED FLEET SIZE & SPECIAL LOGISTICS NOTES:
+NUMBER OF VEHICLES REQUIRED:
+${evtFleet}
+
+SPECIAL LOGISTICS NOTES:
 ${evtNotes}
 
 TERMS:
@@ -964,6 +1041,7 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
     const userCountry = document.getElementById('formCountryField')?.value || 'India';
     const userPhone = document.getElementById('formPhoneField')?.value.trim() || '';
     const persons = document.getElementById('formPersonsField')?.value || '1';
+    const vehiclesCount = document.getElementById('formVehiclesCountField')?.value || '1';
     const pickupLoc = document.getElementById('formPickupLocation')?.value.trim() || 'Delhi NCR';
     const dropLoc = document.getElementById('formDropLocation')?.value.trim() || 'Not specified';
     const subject = formSubjectField?.value || 'Cab Enquiry';
@@ -1035,6 +1113,7 @@ Email: jaswinder@velociticabs.com | Phone: +91 98180 91778`
 🌍 *Country:* ${userCountry}
 📱 *Contact Number:* ${userPhone}
 👥 *No. of Persons:* ${persons}
+🚗 *No. of Vehicles / Cabs:* ${vehiclesCount}
 ${addonsBlockWa}${airportBlockWa}📝 *Subject:* ${subject}
 💬 *Message:* 
 "${message || 'None'}"
@@ -1063,6 +1142,7 @@ Email: ${userEmail || 'Not specified'}
 Country: ${userCountry}
 Contact Number: ${userPhone}
 No. of Persons: ${persons}
+No. of Vehicles / Cabs: ${vehiclesCount}
 
 ${addonsBlockMail}${airportBlockMail}Subject: ${subject}
 Message:

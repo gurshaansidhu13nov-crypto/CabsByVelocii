@@ -3779,17 +3779,23 @@
                 <input type="text" class="form-input" id="corpCityLocation" name="corpCityLocation" placeholder="e.g. Gurgaon Cyber City / Noida Sector 62 / Delhi NCR" />
               </div>
 
-              <!-- Service needed (dropdown) -->
-              <div class="form-field-group">
-                <label for="corpServiceNeeded"><i class="fas fa-hand-holding-box"></i> Service Needed <span class="req">*</span></label>
-                <select class="form-input" id="corpServiceNeeded" name="corpServiceNeeded">
-                  <option value="">*Select Service Needed*</option>
-                  <option value="Employee transport (daily pickup/drop)">Employee transport (daily pickup/drop)</option>
-                  <option value="Corporate car rental (on-demand/airport/outstation)">Corporate car rental (on-demand/airport/outstation)</option>
-                  <option value="Executive/chauffeur-driven cars">Executive/chauffeur-driven cars</option>
-                  <option value="Event or conference transport">Event or conference transport</option>
-                  <option value="Other">Other</option>
-                </select>
+              <!-- Service needed (dropdown) & Fleet Requirement -->
+              <div class="form-twin-row">
+                <div class="form-field-group">
+                  <label for="corpServiceNeeded"><i class="fas fa-hand-holding-box"></i> Service Needed <span class="req">*</span></label>
+                  <select class="form-input" id="corpServiceNeeded" name="corpServiceNeeded">
+                    <option value="">*Select Service Needed*</option>
+                    <option value="Employee transport (daily pickup/drop)">Employee transport (daily pickup/drop)</option>
+                    <option value="Corporate car rental (on-demand/airport/outstation)">Corporate car rental (on-demand/airport/outstation)</option>
+                    <option value="Executive/chauffeur-driven cars">Executive/chauffeur-driven cars</option>
+                    <option value="Event or conference transport">Event or conference transport</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="form-field-group">
+                  <label for="corpFleetCount"><i class="fas fa-car-side"></i> Number of Vehicles Required <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="corpFleetCount" name="corpFleetCount" placeholder="e.g. 5 Sedans, 2 Buses, 8 Cabs" />
+                </div>
               </div>
 
               <div class="form-field-group">
@@ -3855,30 +3861,95 @@
                 <input type="text" class="form-input" id="wedVenueNames" name="wedVenueNames" placeholder="e.g. The Leela Palace, Farmhouse / Hotel / Resort" />
               </div>
 
-              <!-- Number and type of vehicles needed -->
-              <div class="form-field-group">
-                <label><i class="fas fa-car-side"></i> Number and Type of Vehicles Needed <span class="req">*</span></label>
-                <div class="checkbox-pills-row">
-                  <label class="custom-check-pill"><input type="checkbox" id="wedVehLuxurySedan" checked /> <span>Luxury Sedan (Mercedes E-Class / BMW / Audi)</span></label>
-                  <label class="custom-check-pill"><input type="checkbox" id="wedVehSUV" checked /> <span>SUV (Fortuner / Innova Crysta / Hycross)</span></label>
-                  <label class="custom-check-pill"><input type="checkbox" id="wedVehVintage" /> <span>Vintage / Luxury Car (Bride/Groom Entry Car)</span></label>
-                  <label class="custom-check-pill"><input type="checkbox" id="wedVehTempo" checked /> <span>Tempo Traveller / Force Urbania (12-16 Seater)</span></label>
-                  <label class="custom-check-pill"><input type="checkbox" id="wedVehBus" /> <span>Bus (Luxury Coach 22-45 Seater)</span></label>
-                  <label class="custom-check-pill"><input type="checkbox" id="wedVehMixed" /> <span>Mixed Fleet (Combination of Sedans, SUVs &amp; Buses)</span></label>
+              <!-- Total Number of Vehicles Required & Budget Range -->
+              <div class="form-twin-row">
+                <div class="form-field-group">
+                  <label for="wedTotalVehicles"><i class="fas fa-calculator"></i> Total Number of Vehicles Required <span class="req">*</span></label>
+                  <input type="number" class="form-input" id="wedTotalVehicles" name="wedTotalVehicles" min="1" value="5" placeholder="e.g. 5 or 10 Vehicles" />
+                </div>
+                <div class="form-field-group">
+                  <label for="wedBudget"><i class="fas fa-rupee-sign"></i> Budget Range (Optional)</label>
+                  <select class="form-input" id="wedBudget" name="wedBudget">
+                    <option value="Not sure yet" selected>Not sure yet</option>
+                    <option value="Under ₹50,000">Under ₹50,000</option>
+                    <option value="₹50,000 – ₹1,50,000">₹50,000 – ₹1,50,000</option>
+                    <option value="₹1,50,000 – ₹3,00,000">₹1,50,000 – ₹3,00,000</option>
+                    <option value="₹3,00,000 – ₹5,00,000">₹3,00,000 – ₹5,00,000</option>
+                    <option value="₹5,00,000+ (Grand Convoys)">₹5,00,000+ (Grand Convoys)</option>
+                  </select>
                 </div>
               </div>
 
-              <!-- Budget range (optional, with “Not sure yet”) -->
+              <!-- Number and type of vehicles needed with quantity breakdown -->
               <div class="form-field-group">
-                <label for="wedBudget"><i class="fas fa-rupee-sign"></i> Budget Range (Optional)</label>
-                <select class="form-input" id="wedBudget" name="wedBudget">
-                  <option value="Not sure yet" selected>Not sure yet</option>
-                  <option value="Under ₹50,000">Under ₹50,000</option>
-                  <option value="₹50,000 – ₹1,50,000">₹50,000 – ₹1,50,000</option>
-                  <option value="₹1,50,000 – ₹3,00,000">₹1,50,000 – ₹3,00,000</option>
-                  <option value="₹3,00,000 – ₹5,00,000">₹3,00,000 – ₹5,00,000</option>
-                  <option value="₹5,00,000+ (Grand Convoys)">₹5,00,000+ (Grand Convoys)</option>
-                </select>
+                <label><i class="fas fa-car-side"></i> Number and Type of Vehicles Needed <span class="req">*</span></label>
+                <div class="checkbox-pills-row">
+                  <div class="custom-check-pill-item">
+                    <label class="custom-check-pill" for="wedVehLuxurySedan">
+                      <input type="checkbox" id="wedVehLuxurySedan" checked />
+                      <span>Luxury Sedan (Mercedes E-Class / BMW / Audi)</span>
+                    </label>
+                    <div class="pill-qty-box active" id="wedBoxLuxurySedan">
+                      <span class="qty-label">No. of Cars:</span>
+                      <input type="number" id="wedQtyLuxurySedan" class="pill-qty-input wed-qty-calc" min="1" value="2" placeholder="Qty" />
+                    </div>
+                  </div>
+
+                  <div class="custom-check-pill-item">
+                    <label class="custom-check-pill" for="wedVehSUV">
+                      <input type="checkbox" id="wedVehSUV" checked />
+                      <span>SUV (Fortuner / Innova Crysta / Hycross)</span>
+                    </label>
+                    <div class="pill-qty-box active" id="wedBoxSUV">
+                      <span class="qty-label">No. of Cars:</span>
+                      <input type="number" id="wedQtySUV" class="pill-qty-input wed-qty-calc" min="1" value="3" placeholder="Qty" />
+                    </div>
+                  </div>
+
+                  <div class="custom-check-pill-item">
+                    <label class="custom-check-pill" for="wedVehVintage">
+                      <input type="checkbox" id="wedVehVintage" />
+                      <span>Vintage / Luxury Car (Bride/Groom Entry Car)</span>
+                    </label>
+                    <div class="pill-qty-box" id="wedBoxVintage">
+                      <span class="qty-label">No. of Cars:</span>
+                      <input type="number" id="wedQtyVintage" class="pill-qty-input wed-qty-calc" min="1" value="1" placeholder="Qty" />
+                    </div>
+                  </div>
+
+                  <div class="custom-check-pill-item">
+                    <label class="custom-check-pill" for="wedVehTempo">
+                      <input type="checkbox" id="wedVehTempo" checked />
+                      <span>Tempo Traveller / Force Urbania (12-16 Seater)</span>
+                    </label>
+                    <div class="pill-qty-box active" id="wedBoxTempo">
+                      <span class="qty-label">No. of Vans:</span>
+                      <input type="number" id="wedQtyTempo" class="pill-qty-input wed-qty-calc" min="1" value="2" placeholder="Qty" />
+                    </div>
+                  </div>
+
+                  <div class="custom-check-pill-item">
+                    <label class="custom-check-pill" for="wedVehBus">
+                      <input type="checkbox" id="wedVehBus" />
+                      <span>Bus (Luxury Coach 22-45 Seater)</span>
+                    </label>
+                    <div class="pill-qty-box" id="wedBoxBus">
+                      <span class="qty-label">No. of Coaches:</span>
+                      <input type="number" id="wedQtyBus" class="pill-qty-input wed-qty-calc" min="1" value="1" placeholder="Qty" />
+                    </div>
+                  </div>
+
+                  <div class="custom-check-pill-item">
+                    <label class="custom-check-pill" for="wedVehMixed">
+                      <input type="checkbox" id="wedVehMixed" />
+                      <span>Mixed Fleet (Combination of Sedans, SUVs &amp; Buses)</span>
+                    </label>
+                    <div class="pill-qty-box" id="wedBoxMixed">
+                      <span class="qty-label">Total Fleet:</span>
+                      <input type="number" id="wedQtyMixed" class="pill-qty-input wed-qty-calc" min="1" value="5" placeholder="Qty" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <!-- Notes, plus a preferred callback time -->
@@ -3971,10 +4042,16 @@
                 </div>
               </div>
 
-              <!-- Additional Notes -->
-              <div class="form-field-group">
-                <label for="evtNotes"><i class="fas fa-clipboard-list"></i> Estimated Fleet Size &amp; Special Logistics Notes</label>
-                <textarea class="form-input" id="evtNotes" name="evtNotes" placeholder="e.g. Approx 15 Sedans, 8 Innovas, 3 Buses. Dedicated dispatch lead needed at IGI Airport T3."></textarea>
+              <!-- Number of Vehicles Required & Special Logistics Notes -->
+              <div class="form-twin-row">
+                <div class="form-field-group">
+                  <label for="evtFleetCount"><i class="fas fa-car-side"></i> Number of Vehicles Required <span class="req">*</span></label>
+                  <input type="text" class="form-input" id="evtFleetCount" name="evtFleetCount" placeholder="e.g. 15 Sedans, 8 Innovas, 3 Buses" />
+                </div>
+                <div class="form-field-group">
+                  <label for="evtNotes"><i class="fas fa-clipboard-list"></i> Special Logistics Notes (Optional)</label>
+                  <input type="text" class="form-input" id="evtNotes" name="evtNotes" placeholder="e.g. Dedicated dispatch coordinator at T3" />
+                </div>
               </div>
             </div>
 
@@ -4021,10 +4098,16 @@
               </div>
             </div>
 
-            <!-- No. of Persons -->
-            <div class="form-field-group">
-              <label for="formPersonsField">No. of Persons <span class="req">*</span></label>
-              <input type="number" class="form-input" id="formPersonsField" name="persons" min="1" value="1" placeholder="e.g. 2" />
+            <!-- No. of Persons & Number of Vehicles -->
+            <div class="form-twin-row">
+              <div class="form-field-group">
+                <label for="formPersonsField"><i class="fas fa-users"></i> No. of Persons <span class="req">*</span></label>
+                <input type="number" class="form-input" id="formPersonsField" name="persons" min="1" value="1" placeholder="e.g. 2" />
+              </div>
+              <div class="form-field-group">
+                <label for="formVehiclesCountField"><i class="fas fa-car"></i> Number of Vehicles / Cabs <span class="req">*</span></label>
+                <input type="number" class="form-input" id="formVehiclesCountField" name="vehiclesCount" min="1" value="1" placeholder="e.g. 1 Cab" />
+              </div>
             </div>
 
             <!-- Enquiry Subject -->

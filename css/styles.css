@@ -2472,6 +2472,85 @@ ul {
   margin-top: 6px;
 }
 
+.custom-check-pill-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #FFFFFF;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  transition: var(--transition-fast);
+}
+
+.custom-check-pill-item:hover {
+  border-color: var(--brand-green);
+  background: rgba(46, 125, 50, 0.02);
+}
+
+.custom-check-pill-item .custom-check-pill {
+  border: none;
+  background: transparent;
+  padding: 0;
+  flex: 1;
+}
+
+.custom-check-pill-item .custom-check-pill:hover {
+  background: transparent;
+}
+
+.pill-qty-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  background: #F3F4F6;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid #E5E7EB;
+  transition: var(--transition-fast);
+}
+
+.pill-qty-box.active {
+  background: rgba(46, 125, 50, 0.08);
+  border-color: rgba(46, 125, 50, 0.35);
+}
+
+.pill-qty-box .qty-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.pill-qty-box .pill-qty-input {
+  width: 58px;
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  background: #FFFFFF;
+}
+
+.pill-qty-box .pill-qty-input:focus {
+  border-color: var(--brand-green);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+}
+
+@media (max-width: 640px) {
+  .custom-check-pill-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pill-qty-box {
+    margin-left: auto;
+  }
+}
+
 .custom-check-pill {
   display: flex;
   align-items: center;

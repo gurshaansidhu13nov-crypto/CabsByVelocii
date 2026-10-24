@@ -273,7 +273,12 @@ ul {
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 14px 0;
+  padding: 12px 0;
+  background: rgba(17, 24, 39, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
   transition: var(--transition-normal);
 }
 
@@ -284,11 +289,9 @@ ul {
 
 .header.scrolled {
   padding: 10px 0;
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  background: rgba(17, 24, 39, 0.98);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
 }
 
 .navbar {
@@ -370,16 +373,18 @@ ul {
   border-radius: var(--radius-full);
   font-size: 0.83rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
+  color: #FFFFFF !important;
+  opacity: 0.95;
   transition: var(--transition-fast);
   line-height: 1.2;
 }
 
 .nav-pill-menu a:hover,
 .nav-pill-menu a.active {
-  background: #FFFFFF;
-  color: var(--brand-black);
+  background: #FFFFFF !important;
+  color: var(--brand-black) !important;
   font-weight: 700;
+  opacity: 1;
   box-shadow: var(--shadow-xs);
 }
 
@@ -395,15 +400,16 @@ ul {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   font-size: 0.88rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
   padding: 8px 16px;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   white-space: nowrap;
   flex-shrink: 0;
+  transition: var(--transition-fast);
 }
 
 .nav-phone-link i {
@@ -411,8 +417,9 @@ ul {
 }
 
 .nav-phone-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .hamburger {

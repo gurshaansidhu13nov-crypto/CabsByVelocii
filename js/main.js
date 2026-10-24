@@ -37,6 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
+  // Nav Pill Menu Active State Switcher
+  const navPillLinks = document.querySelectorAll('.nav-pill-menu a');
+  navPillLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navPillLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+
   // ---------- 3. Mobile Navigation Drawer ----------
   const hamburger = document.querySelector('.hamburger');
   const mobileMenu = document.querySelector('.mobile-menu');
